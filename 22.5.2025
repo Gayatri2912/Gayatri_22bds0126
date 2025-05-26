@@ -1,0 +1,113 @@
+USE vit;
+
+-- View data
+SELECT * FROM employee1;
+SELECT * FROM employee;
+
+-- Count by department
+SELECT COUNT(dept)
+FROM employee1
+GROUP BY dept
+ORDER BY COUNT(dept) DESC
+LIMIT 1;
+
+-- Department with minimum total income
+SELECT dept, SUM(income) AS total_income 
+FROM employee1 
+GROUP BY dept 
+ORDER BY total_income 
+LIMIT 1;
+
+-- Sum of income per department
+SELECT dept, SUM(income) 
+FROM employee1 
+GROUP BY dept;
+
+-- Departments with more than 3 employees
+SELECT dept, COUNT(dept) 
+FROM employee1 
+GROUP BY dept 
+HAVING COUNT(dept) > 3;
+
+-- Department with highest total income
+SELECT dept, SUM(income) AS total_income 
+FROM employee1 
+GROUP BY dept 
+ORDER BY total_income DESC 
+LIMIT 1;
+
+-- Department with 2nd highest total income
+SELECT dept, SUM(income) 
+FROM employee1 
+GROUP BY dept 
+ORDER BY SUM(income) DESC 
+LIMIT 1 OFFSET 1;
+
+-- Employee(s) with max income
+SELECT emp_name, dept 
+FROM employee1 
+WHERE income = (SELECT MAX(income) FROM employee1);
+
+-- Employees with income above average
+SELECT emp_name, dept, income 
+FROM employee1 
+WHERE income > (SELECT AVG(income) FROM employee1);
+
+-- Create learner table
+CREATE TABLE learner (
+    l_id INT,
+    l_name VARCHAR(25)
+);
+
+-- Insert into learner
+INSERT INTO learner VALUES
+(201, 'Jayanth'),
+(202, 'Karthik'),
+(203, 'Praveen'),
+(205, 'Mahesh'),
+(206, 'Arun');
+
+-- Create location table
+CREATE TABLE location (
+    l_id INT,
+    l_location VARCHAR(25)
+);
+
+-- Insert into location
+INSERT INTO location VALUES 
+(201, 'Coimbatore'),
+(204, 'Chennai'),
+(205, 'Pune');
+
+-- View tables
+SELECT * FROM learner;
+SELECT * FROM location;
+
+-- Cross join
+SELECT * FROM learner CROSS JOIN location;
+
+-- Inner join
+SELECT * FROM learner INNER JOIN location 
+ON learner.l_id = location.l_id;
+
+-- Left outer join
+SELECT * FROM learner LEFT OUTER JOIN location 
+ON learner.l_id = location.l_id;
+
+-- Right outer join
+SELECT * FROM learner RIGHT OUTER JOIN location 
+ON learner.l_id = location.l_id;
+
+-- Full join (Note: Supported in some DBMS like PostgreSQL, not MySQL)
+SELECT * FROM learner 
+FULL JOIN location 
+ON learner.l_id = location.l_id;
+
+-- 5th highest distinct income
+SELECT DISTINCT income
+FROM employee1 E1
+WHERE (
+    SELECT COUNT(DISTINCT income)
+    FROM employee1 E2
+    WHERE E2.income > E1.income
+) = 4;
