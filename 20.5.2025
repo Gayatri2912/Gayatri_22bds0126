@@ -1,0 +1,80 @@
+CREATE DATABASE school;
+USE school;
+
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY,
+    name VARCHAR(100)
+);
+
+CREATE TABLE Library_Issues (
+    issue_id INT PRIMARY KEY,
+    student_id INT,
+    book_title VARCHAR(100),
+    FOREIGN KEY (student_id) REFERENCES Students(student_id)
+);
+
+INSERT INTO Students VALUES
+(101, 'Rahul'),
+(102, 'Nikita'),
+(103, 'Ayesha');
+
+INSERT INTO Library_Issues VALUES
+(1, 101, 'C Programming'),
+(2, 102, 'Data Structures'),
+(3, 101, 'Discrete Math'),
+(4, 105, 'Ethics and Values'); -- This will fail if student 105 doesn't exist
+
+
+CREATE DATABASE store;
+USE store;
+
+CREATE TABLE category (
+    c_id INT PRIMARY KEY,
+    c_name VARCHAR(40),
+    c_details VARCHAR(25)
+);
+
+INSERT INTO category VALUES
+(101, 'electronics', 'abcdefgh'),
+(102, 'furnitures', 'xyzdetails');
+
+CREATE TABLE products (
+    p_id INT PRIMARY KEY,
+    p_name VARCHAR(25),
+    p_details VARCHAR(35),
+    c_id INT,
+    FOREIGN KEY (c_id) REFERENCES category(c_id)
+);
+
+INSERT INTO products VALUES
+(1, 'TV', 'Smart LED 42 inch', 101),
+(2, 'TV', 'Smart LED 42 inch', 101),
+(3, 'Sofa', 'Leather 3-seater', 102);
+
+-- Attempting delete/update with FK
+-- UPDATE products SET c_id = 103 WHERE c_id = 101;
+-- DELETE FROM category WHERE c_id = 101;
+
+
+CREATE TABLE cust_details (
+    first_name VARCHAR(40) NOT NULL,
+    middle_name VARCHAR(40) NOT NULL,
+    last_name VARCHAR(40) NOT NULL,
+    c_id INT PRIMARY KEY,
+    c_country VARCHAR(35) DEFAULT 'India'
+);
+
+INSERT INTO cust_details VALUES
+('Shalu', ' ', 'Kumari', 101);
+
+
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    order_date DATE,
+    c_id INT,
+    FOREIGN KEY (c_id) REFERENCES cust_details(c_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
