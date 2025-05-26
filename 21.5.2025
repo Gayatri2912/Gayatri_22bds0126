@@ -1,0 +1,116 @@
+USE vit;
+
+SHOW TABLES;
+
+SELECT * FROM worker1;
+DESC worker1;
+
+CREATE TABLE worker (
+    worker_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    salary INT,
+    joining_date DATETIME,
+    department VARCHAR(50)
+);
+
+INSERT INTO worker VALUES
+(101, 'Varun', 'Kumar', 105000, '2016-02-18 09:00:00', 'HR'),
+(102, 'Meera', 'Joshi', 95000, '2017-06-10 09:00:00', 'Admin'),
+(103, 'Amit', 'Desai', 115000, '2018-04-21 09:00:00', 'Finance'),
+(104, 'Tanya', 'Roy', 89000, '2016-11-15 09:00:00', 'IT'),
+(105, 'Rakesh', 'Verma', 134000, '2019-01-05 09:00:00', 'HR'),
+(106, 'Divya', 'Pillai', 78000, '2020-03-13 09:00:00', 'Finance'),
+(107, 'Ishaan', 'Nair', 87000, '2021-08-20 09:00:00', 'Admin'),
+(108, 'Sanya', 'Bose', 99000, '2022-05-25 09:00:00', 'IT');
+
+-- Sample queries
+SELECT * FROM worker1 WHERE worker_id IN (1, 2);
+SELECT * FROM worker1 WHERE worker_id NOT IN (1, 2);
+SELECT * FROM worker1 WHERE salary BETWEEN 100000 AND 200000;
+SELECT * FROM worker1 WHERE salary NOT BETWEEN 100000 AND 200000;
+SELECT * FROM worker1 WHERE salary BETWEEN 100000 AND 300000 AND (worker_id IN (1, 2, 3, 4));
+SELECT MIN(salary) FROM worker1;
+SELECT MAX(salary) FROM worker1;
+SELECT SUM(salary) FROM worker1;
+SELECT AVG(salary) FROM worker1;
+SELECT * FROM worker1 WHERE salary = (SELECT MIN(salary) FROM worker1);
+
+SELECT department, SUM(salary) AS total_salary
+FROM worker1
+GROUP BY department
+HAVING SUM(salary) > 100000;
+
+SELECT DISTINCT(department) FROM worker1;
+SELECT department FROM worker
+UNION
+SELECT department FROM worker1;
+
+SELECT department FROM worker
+UNION ALL
+SELECT department FROM worker1;
+
+SELECT * FROM worker1 WHERE worker_id IN (1, 2, 3)
+UNION
+SELECT * FROM worker WHERE worker_id IN (101, 102, 103);
+
+SELECT * FROM worker1 WHERE salary <= 200000 ORDER BY salary;
+SELECT * FROM worker1 WHERE salary <= 200000 ORDER BY salary DESC;
+SELECT * FROM worker1 WHERE first_name LIKE '_i%l';
+SELECT * FROM worker1 WHERE first_name LIKE '__i%';
+SELECT * FROM worker1 WHERE first_name LIKE '%a_a';
+SELECT * FROM worker1 WHERE first_name LIKE '_aa%';
+SELECT * FROM worker1 WHERE first_name LIKE 'M%' OR first_name LIKE 'N%';
+
+
+CREATE VIEW admin_team AS SELECT * FROM worker1 WHERE department = 'Admin' AND salary < 100000;
+CREATE OR REPLACE VIEW admin_team AS SELECT * FROM worker1 WHERE department = 'Admin' AND salary > 200000;
+SELECT * FROM admin_team;
+DROP VIEW admin_team;
+
+
+SELECT first_name, salary,
+CASE
+    WHEN salary > 300000 THEN "Rich people"
+    WHEN salary <= 300000 AND salary >= 100000 THEN "MIDDLE CLASS"
+    WHEN salary <= 100000 AND salary >= 0 THEN "POOR CLASS"
+    ELSE "Data not found"
+END AS Status_checksalary
+FROM worker;
+
+SELECT * FROM worker;
+
+-- Product table
+CREATE TABLE product (
+    ProductID INT PRIMARY KEY,
+    ProductName VARCHAR(100),
+    SupplierID INT,
+    CategoryID INT,
+    Unit VARCHAR(50),
+    Price DECIMAL(10, 2)
+);
+
+
+INSERT INTO product VALUES
+(1, 'Organic Honey', 2, 1, '6 jars x 500g', 25.00),
+(2, 'Almond Milk', 3, 1, '12 cartons x 1L', 30.00),
+(3, 'Olive Oil', 1, 2, '6 bottles x 750ml', 45.00),
+(4, 'Herbal Shampoo', 4, 3, '24 bottles x 250ml', 60.00),
+(5, 'Multigrain Bread', 2, 1, '12 packs', 18.00);
+
+-- Orders table
+CREATE TABLE orders (
+    OrderID INT PRIMARY KEY,
+    CustomerID INT,
+    EmployeeID INT,
+    OrderDate DATE,
+    ShipperID INT
+);
+
+
+INSERT INTO orders VALUES
+(30001, 101, 7, '2021-09-12', 2),
+(30002, 102, 6, '2021-10-04', 1),
+(30003, 103, 5, '2021-11-15', 3),
+(30004, 104, 4, '2021-12-05', 2),
+(30005, 105, 3, '2022-01-10', 1);
