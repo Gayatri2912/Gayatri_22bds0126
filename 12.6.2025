@@ -1,0 +1,24 @@
+Step 1: Create directories for each MongoDB instance
+mkdir -p ~/Desktop/mongoDB/replicaPractice/db0
+mkdir -p ~/Desktop/mongoDB/replicaPractice/db1
+mkdir -p ~/Desktop/mongoDB/replicaPractice/db2
+
+Step 2: Start each mongod instance as part of the replica set
+mongod --port 27017 --dbpath ~/Desktop/mongoDB/replicaPractice/db0 --replSet "rs0" --bind_ip localhost --fork --logpath ~/Desktop/mongoDB/replicaPractice/db0.log
+mongod --port 27018 --dbpath ~/Desktop/mongoDB/replicaPractice/db1 --replSet "rs0" --bind_ip localhost --fork --logpath ~/Desktop/mongoDB/replicaPractice/db1.log
+mongod --port 27019 --dbpath ~/Desktop/mongoDB/replicaPractice/db2 --replSet "rs0" --bind_ip localhost --fork --logpath ~/Desktop/mongoDB/replicaPractice/db2.log
+
+Step 3: Connect to the first node using mongosh
+mongosh --port 27017
+
+Step 4: To initialise the replica set.
+rs.initiate({
+  _id: "rs0",
+  members: [
+    { _id: 0, host: "localhost:27017" },
+    { _id: 1, host: "localhost:27018" },
+    { _id: 2, host: "localhost:27019" }
+  ]
+})
+Verifying: rs.status()
+
