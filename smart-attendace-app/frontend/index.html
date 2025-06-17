@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Attendance</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(4px);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    .buttons {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    button {
+      background-color: #ffffff;
+      border: none;
+      color: #333;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #f1f1f1;
+      transform: scale(1.05);
+    }
+
+    .status {
+      margin-top: 15px;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 10px;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📸 Smart Attendance</h1>
+    <form id="attendanceForm">
+      <input type="text" id="name" placeholder="Enter your name" required />
+      <input type="email" id="email" placeholder="Enter your email" required />
+      <div class="buttons">
+        <button type="submit">✅ Submit Attendance</button>
+        <button type="button" onclick="checkBackend()">🔄 Check Backend</button>
+        <button type="button" onclick="downloadCSV()">📥 Download CSV</button>
+      </div>
+      <div class="status" id="statusMessage"></div>
+    </form>
+  </div>
+  <footer>&copy; 2025 Smart Attendance App. Made with ❤️</footer>
+
+  <script>
+    document.getElementById("attendanceForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+
+      try {
+        const res = await fetch("http://localhost:3000/attendance", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ name, email })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          document.getElementById("statusMessage").textContent = data.message;
+          document.getElementById("statusMessage").style.color = "lightgreen";
+        } else {
+          document.getElementById("statusMessage").textContent = data.error || "Something went wrong.";
+          document.getElementById("statusMessage").style.color = "red";
+        }
+      } catch (error) {
+        document.getElementById("statusMessage").textContent = "Failed to connect to backend.";
+        document.getElementById("statusMessage").style.color = "red";
+      }
+    });
+
+    function checkBackend() {
+      fetch('http://localhost:3000/')
+        .then(res => res.text())
+        .then(data => {
+          document.getElementById('statusMessage').textContent = data;
+          document.getElementById('statusMessage').style.color = 'lightgreen';
+        })
+        .catch(() => {
+          document.getElementById('statusMessage').textContent = 'Backend is not responding';
+          document.getElementById('statusMessage').style.color = 'red';
+        });
+    }
+
+    function downloadCSV() {
+      window.location.href = "http://localhost:3000/download";
+    }
+  </script>
+</body>
+</html>
