@@ -1,0 +1,54 @@
+<!-- ✅ Updated register.html to connect with backend -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h2>Register</h2>
+  <form id="registerForm">
+    <input type="text" id="name" placeholder="Full Name" required><br>
+    <input type="email" id="email" placeholder="Email" required><br>
+    <input type="password" id="password" placeholder="Password" required><br>
+    <select id="role" required>
+      <option value="student">Student</option>
+      <option value="admin">Admin</option>
+    </select><br>
+    <button type="submit">Register</button>
+  </form>
+
+  <p>Already registered? <a href="login.html">Login here</a></p>
+
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const role = document.getElementById("role").value;
+
+      try {
+        const response = await fetch("http://localhost:3000/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password, role })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          alert("✅ Registered successfully!");
+          window.location.href = "login.html";
+        } else {
+          alert("❌ Error: " + result.error);
+        }
+      } catch (err) {
+        alert("❌ Failed to register. Server error.");
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
